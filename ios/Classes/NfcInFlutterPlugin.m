@@ -467,45 +467,6 @@
     }
 }
 
-- (void)readerSession:(NFCNDEFReaderSession *)session
-        didDetectTags:(NSArray<__kindof id<NFCNDEFTag>> *)tags API_AVAILABLE(ios(13.0)) {
-    // Iterate through the tags and send them to Flutter with the following structure:
-    // { Map
-    //   "id": "", // empty
-    //   "message_type": "ndef",
-    //   "records": [ List
-    //     { Map
-    //       "type": "The record's content type",
-    //       "payload": "The record's payload",
-    //       "id": "The record's identifier",
-    //     }
-    //   ]
-    // }
-    
-    for (id<NFCNDEFTag> tag in tags) {
-        [session connectToTag:tag completionHandler:^(NSError * _Nullable error) {
-            if (error != nil) {
-                NSLog(@"connect error: %@", error.localizedDescription);
-                return;
-            }
-            [tag readNDEFWithCompletionHandler:^(NFCNDEFMessage * _Nullable message, NSError * _Nullable error) {
-                
-                if (error != nil) {
-                    NSLog(@"ERROR: %@", error.localizedDescription);
-                    return;
-                }
-                
-                NSDictionary* result = [self formatMessageWithIdentifier:@"" message:message];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (self->events != nil) {
-                        self->events(result);
-                    }
-                });
-            }];
-        }];
-    }
-}
-
 - (void)readerSessionDidBecomeActive:(NFCNDEFReaderSession *)session API_AVAILABLE(ios(13.0)) {}
 
 - (void)writeToTag:(NSDictionary*)data completionHandler:(void (^_Nonnull) (FlutterError * _Nullable error))completionHandler {
@@ -517,14 +478,6 @@
 @implementation NFCWritableWrapperImpl
 
 @synthesize lastTag;
-
-- (void)readerSession:(NFCNDEFReaderSession *)session
-        didDetectTags:(NSArray<__kindof id<NFCNDEFTag>> *)tags API_AVAILABLE(ios(13.0)) {
-    [super readerSession:session didDetectTags:tags];
-    
-    // Set the last tags scanned
-    lastTag = tags[[tags count] - 1];
-}
 
 - (void)writeToTag:(NSDictionary*)data completionHandler:(void (^_Nonnull) (FlutterError * _Nullable error))completionHandler {
     NFCNDEFMessage* ndefMessage = [self formatNDEFMessageWithDictionary:data];
