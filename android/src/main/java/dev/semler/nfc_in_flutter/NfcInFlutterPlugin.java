@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -42,7 +44,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 /**
  * NfcInFlutterPlugin
  */
-public class NfcInFlutterPlugin implements FlutterPlugin, MethodCallHandler,
+public class NfcInFlutterPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware,
         EventChannel.StreamHandler,
         PluginRegistry.NewIntentListener,
         NfcAdapter.ReaderCallback {
@@ -52,7 +54,7 @@ public class NfcInFlutterPlugin implements FlutterPlugin, MethodCallHandler,
     private final int DEFAULT_READER_FLAGS = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_NFC_B | NfcAdapter.FLAG_READER_NFC_F | NfcAdapter.FLAG_READER_NFC_V;
     private static final String LOG_TAG = "NfcInFlutterPlugin";
 
-    private final Activity activity;
+    private Activity activity;
     private NfcAdapter adapter;
     private EventChannel.EventSink events;
 
@@ -578,6 +580,26 @@ public class NfcInFlutterPlugin implements FlutterPlugin, MethodCallHandler,
             records[i] = new NdefRecord(tnfValue, typeBytes, idBytes, payloadBytes);
         }
         return new NdefMessage(records);
+    }
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+
     }
 
     private static class FormatRequest {
