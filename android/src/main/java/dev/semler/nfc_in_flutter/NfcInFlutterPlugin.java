@@ -74,22 +74,6 @@ public class NfcInFlutterPlugin implements FlutterPlugin, MethodCallHandler, Act
         channel.setMethodCallHandler(null);
     }
 
-    /**
-     * Plugin registration.
-     */
-    public static void registerWith(Registrar registrar) {
-        final MethodChannel  channel = new MethodChannel(registrar.messenger(), "nfc_in_flutter");
-        final EventChannel tagChannel = new EventChannel(registrar.messenger(), "nfc_in_flutter/tags");
-        NfcInFlutterPlugin plugin = new NfcInFlutterPlugin(registrar.activity());
-        registrar.addNewIntentListener(plugin);
-        channel.setMethodCallHandler(plugin);
-        tagChannel.setStreamHandler(plugin);
-    }
-
-    private NfcInFlutterPlugin(Activity activity) {
-        this.activity = activity;
-    }
-
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
