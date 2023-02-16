@@ -62,8 +62,11 @@ public class NfcInFlutterPlugin implements FlutterPlugin, MethodCallHandler, Act
     private Tag lastTag = null;
     private MethodChannel channel;
 
+
+
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        Log.e("ICIIII", "ICIIIII");
         channel = new MethodChannel(binding.getBinaryMessenger(), "nfc_in_flutter");
         final EventChannel tagChannel = new EventChannel(binding.getBinaryMessenger(), "nfc_in_flutter/tags");
         channel.setMethodCallHandler(this);
@@ -74,6 +77,28 @@ public class NfcInFlutterPlugin implements FlutterPlugin, MethodCallHandler, Act
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
+    }
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        Log.e("ICIIII", "ICIIIII22222");
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        Log.e("ICIIII", "ICIIIII33333");
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+
     }
 
     @Override
@@ -566,26 +591,6 @@ public class NfcInFlutterPlugin implements FlutterPlugin, MethodCallHandler, Act
             records[i] = new NdefRecord(tnfValue, typeBytes, idBytes, payloadBytes);
         }
         return new NdefMessage(records);
-    }
-
-    @Override
-    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-        activity = binding.getActivity();
-    }
-
-    @Override
-    public void onDetachedFromActivityForConfigChanges() {
-
-    }
-
-    @Override
-    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
-        activity = binding.getActivity();
-    }
-
-    @Override
-    public void onDetachedFromActivity() {
-
     }
 
     private static class FormatRequest {
