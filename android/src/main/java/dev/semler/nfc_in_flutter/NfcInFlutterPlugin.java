@@ -64,8 +64,10 @@ public class NfcInFlutterPlugin implements FlutterPlugin, MethodCallHandler, Act
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        channel = new MethodChannel(binding.getBinaryMessenger(), "flutter_plugin");
+        channel = new MethodChannel(binding.getBinaryMessenger(), "nfc_in_flutter");
+        final EventChannel tagChannel = new EventChannel(binding.getBinaryMessenger(), "nfc_in_flutter/tags");
         channel.setMethodCallHandler(this);
+        tagChannel.setStreamHandler(this);
         adapter = NfcAdapter.getDefaultAdapter(binding.getApplicationContext());
     }
 
